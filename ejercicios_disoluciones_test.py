@@ -1,5 +1,7 @@
 import unittest
-from disoluciones import calculadoraMasa, calculadoraMoles, calculadoraVolumen, concentraciones
+import concentraciones
+from disoluciones import calculadoraMasa, calculadoraMoles, calculadoraVolumen
+import concentraciones
 
 """
 Esta clase de unitesting tendrá los ejercicios de la guía
@@ -84,14 +86,14 @@ class DisolucionesEjerciciosIntroductorios(unittest.TestCase):
         masaDis = 400  # g H20
         masaSn = masaDis + masaSol  # g
 
-        porcentajeEsperad = (30/400)*100
+        porcentajeEsperad = (30/(400+30))*100
         porcentaje = concentraciones.calcularPorcentaje(masaSol, masaSn)
         self.assertEqual(porcentaje, porcentajeEsperad,
                          f'se esperaba {porcentajeEsperad}')
 
     # 2.b
     def test_2_b(self):
-        masaSol = 3  # g nitrato de plata
+        masaSol = 30  # g nitrato de plata
         volumenSn = 60  # ml solucion
 
         porcentajeEsperado = (30/60)*100
@@ -196,14 +198,17 @@ class DisolucionesEjerciciosIntroductorios(unittest.TestCase):
         # ! falta terminar
         # solvente H2O
         masaSv = 1.2 * 1000  # g
+        volumenSv = masaSv
 
         # soluto sal
         masaSt = 250  # g
+        densidadSt = 1.5
+        volumenSt = calculadoraVolumen.masa_densidad(masaSt, densidadSt)
 
         # solución
         masaSn = masaSt + masaSv  # g
         densidadSn = 1.2  # g/ml
-        volumenEsperadoSn = masaSn * densidadSn  # ml
+        volumenEsperadoSn = masaSn / densidadSn  # ml
         volumenSn = calculadoraVolumen.masa_densidad(masaSn, densidadSn)
         self.assertEqual(volumenSn, volumenEsperadoSn,
                          f'el volumen esperado es {volumenEsperadoSn} de solucion')
@@ -216,7 +221,17 @@ class DisolucionesEjerciciosIntroductorios(unittest.TestCase):
 
         porcentajeMV = concentraciones.calcularPorcentaje(masaSt, volumenSn)
         porcentajeMVEsperado = (masaSt/volumenSn)*100
-        self.assertEqual(porcentajeMV, porcentajeMMEsperado, f'')
+        self.assertEqual(porcentajeMV, porcentajeMVEsperado,
+                         f'se esperaba {porcentajeMVEsperado} %m/v')
+
+        porcentajeVV = concentraciones.calcularPorcentaje(volumenSt, volumenSn)
+        porcentajeVVEsperado = (volumenSt/volumenSn)*100
+
+        # gramos de soluto en 5kg de solucion
+        respuesta = concentraciones.calcularSoluto(porcentajeMM, 5000)
+        respuestaEsperada = (porcentajeMMEsperado/5000)*100
+        self.assertEqual(respuesta, respuestaEsperada,
+                         f'se esperaba cómo respuesta {respuestaEsperada} gramos')
 
 
 if __name__ == '__main__':
